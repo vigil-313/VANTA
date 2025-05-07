@@ -1,0 +1,18 @@
+Add functionality for goal tracking and autonomous daily behavior.
+
+Features:
+- Let the user set goals like “drink water”, “practice mindfulness”
+- Log activity streaks in a JSON log (with timestamps)
+- Implement daily check-in routine:
+  - At a set time, the VANTA should summarize progress, ask reflective questions, and update state
+- Add a habit tracker module with:
+  - `track_goal(goal_name: str)`
+  - `get_progress_report() -> str`
+- Daily review triggers `generate_daily_summary()`, which summarizes memory logs
+
+Modules:
+- `habits/tracker.py`
+- `habits/scheduler.py`
+- Extend `main.py` to check time-based triggers
+
+For now use Python timers or loops; cron and OS daemons can be added later.

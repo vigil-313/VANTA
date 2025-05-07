@@ -1,0 +1,68 @@
+**/.claude/settings.local.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.spyderproject
+.spyproject
+.ropeproject
+
+# Logs
+logs/
+*.log
+
+# Data
+data/conversations/*
+data/vector_db/*
+data/user_data/*
+!data/conversations/.gitkeep
+!data/vector_db/.gitkeep
+!data/user_data/.gitkeep
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Local development
+.local/

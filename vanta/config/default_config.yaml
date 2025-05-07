@@ -1,0 +1,70 @@
+# VANTA Default Configuration
+
+# System-wide settings
+system:
+  name: "VANTA"
+  version: "0.1.0"
+  log_level: "INFO"
+  log_file: "logs/vanta.log"
+  data_dir: "data"
+
+# Voice input settings
+microphone:
+  device_index: null  # null = default device
+  sample_rate: 16000
+  chunk_size: 1024
+  channels: 1
+  vad_sensitivity: 3  # 1-3, where 3 is most sensitive
+  silence_threshold: 400  # ms of silence to consider speech ended
+  max_phrase_duration: 30000  # max ms for a single phrase before forced processing
+
+# Speech-to-Text settings
+stt:
+  service: "whisper"  # whisper, google, azure
+  model: "base"  # whisper model size: tiny, base, small, medium, large
+  language: "en"
+  timeout: 15.0  # seconds
+
+# Text-to-Speech settings
+tts:
+  service: "elevenlabs"  # elevenlabs, google, azure, system
+  voice: "default"
+  rate: 1.0
+  pitch: 0.0
+  volume: 1.0
+  
+# LLM settings
+llm:
+  service: "claude"  # claude, gpt
+  model: "claude-3-sonnet-20240229"  # model identifier
+  temperature: 0.7
+  max_tokens: 1024
+  api_key_env: "CLAUDE_API_KEY"  # environment variable name for API key
+  timeout: 30.0  # seconds
+  
+# Memory settings
+memory:
+  conversation_history_limit: 100  # number of conversations to keep in memory
+  vector_db_path: "data/vector_db"
+  embeddings_model: "all-mpnet-base-v2"  # sentence-transformers model
+  
+# Personality settings
+personality:
+  default_profile: "default"
+  traits:
+    friendliness: 0.7  # 0.0-1.0
+    formality: 0.3     # 0.0-1.0
+    helpfulness: 0.8   # 0.0-1.0
+    curiosity: 0.6     # 0.0-1.0
+    humor: 0.5         # 0.0-1.0
+  
+# Scheduler settings
+scheduler:
+  check_interval: 60  # seconds between schedule checks
+  reminder_advance_notice: 300  # seconds before event to give notice
+  
+# "Should I speak" decision settings
+speak_decision:
+  base_threshold: 0.6  # base probability threshold for speaking
+  interrupt_penalty: 0.3  # penalty for interrupting ongoing speech
+  recency_penalty: 0.1  # penalty for speaking too frequently

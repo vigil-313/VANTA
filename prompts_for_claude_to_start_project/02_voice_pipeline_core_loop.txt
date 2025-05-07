@@ -1,0 +1,17 @@
+Now generate the core live VANTA loop.
+
+This module:
+- Listens via microphone in real-time
+- Streams audio to Whisper (or Apple STT if preferred)
+- Transcribes speech with timestamps
+- Buffers the last 60 seconds of conversation
+- Passes conversation buffer into a function `should_respond(context_buffer: List[str]) -> bool`
+- If that function returns True, passes the buffer to `generate_response()`, then speaks via TTS
+
+It should log all speech to a transcript file.
+
+Use modular services like `transcribe.py`, `speak.py`, and `logic.py`.
+
+Use `main.py` as the orchestrator and create any submodules needed.
+
+Start with basic transcript logging and response flow — we’ll add memory later.

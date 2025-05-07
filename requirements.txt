@@ -1,0 +1,33 @@
+# Core dependencies
+pyyaml>=6.0        # Configuration management
+python-dotenv>=1.0.0  # Environment variable management
+
+# Audio processing
+sounddevice>=0.4.6   # Audio capture
+numpy>=1.24.0        # Audio data processing
+webrtcvad>=2.0.10    # Voice activity detection
+SpeechRecognition>=3.10.0  # Speech recognition interface
+
+# LLM and embeddings
+anthropic>=0.5.0     # Claude API client
+openai>=1.1.0        # Optional GPT-4o integration
+sentence-transformers>=2.2.2  # Vector embeddings
+
+# TTS
+elevenlabs>=0.2.24   # High quality TTS
+pyttsx3>=2.90        # Fallback offline TTS
+
+# Vector database
+chromadb>=0.4.18     # Vector storage and search
+
+# Async utilities
+aiofiles>=23.2.1     # Async file operations
+
+# Scheduling
+apscheduler>=3.10.1  # Task scheduling
+
+# Development dependencies
+pytest>=7.4.0        # Testing
+black>=23.3.0        # Code formatting
+isort>=5.12.0        # Import sorting
+mypy>=1.5.1          # Type checking

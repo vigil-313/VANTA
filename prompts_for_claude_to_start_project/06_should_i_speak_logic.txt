@@ -1,0 +1,18 @@
+Design the core decision-making function: `should_respond(transcript: List[str]) -> bool`
+
+Purpose:
+- Analyze recent dialogue to decide if the VANTA should speak
+- Must evaluate:
+  - Was a question asked?
+  - Did the user speak a keyword (“what do you think”)
+  - Is there a long pause or lull?
+  - Are repeated topics or goals being referenced?
+
+Use basic heuristics + LLM judgment:
+- Run the context through Claude with a system prompt like:
+  “You are a quiet but helpful VANTA. Should you say something now? Only respond YES or NO.”
+
+Allow tuning the sensitivity to silence, keywords, or emotional tone.
+
+Implement:
+- `logic/should_speak.py`

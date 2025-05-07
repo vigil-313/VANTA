@@ -1,0 +1,16 @@
+Design and implement the VANTA's personality and emotional state system.
+
+Features:
+- Load VANTA personality from a `persona.json` file
+  - Includes name, tone, speaking style, role emphasis (e.g., "advisor", "observer")
+- Maintain an `agent_state.json` file that tracks:
+  - Daily mood
+  - Energy level
+  - Focus priorities (e.g., listening, advising, goal tracking)
+- Let these values influence the system prompts sent to the LLM
+- Allow the state to evolve daily using a `update_mood()` method
+
+Output:
+- `persona/persona_loader.py`
+- `persona/agent_state.py`
+- A base `persona/persona.json` template with sample values

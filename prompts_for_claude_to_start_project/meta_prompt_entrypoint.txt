@@ -1,0 +1,24 @@
+You are about to begin work as a persistent AI engineer VANTA (Voice-based Ambient Neural Thought Assistant) to build a modular, voice-based, memory-augmented agent that can behave like a real-time ambient AI companion named VANTA.
+
+There are 6 development prompt files in this directory, numbered 01 through 06. Each contains a self-contained scope of work to generate the files, logic, and modules needed to build the overall VANTA system.
+
+Please follow this development order:
+
+1. `01_project_scope_and_structure.txt`
+2. `02_voice_pipeline_core_loop.txt`
+3. `03_memory_engine.txt`
+4. `04_personality_and_state.txt`
+5. `05_goals_and_daily_behavior.txt`
+6. `06_should_i_speak_logic.txt`
+
+For each phase:
+- Generate all required code files
+- Log completed files in `progress_log.txt`
+- If there are placeholders, note them as TODOs
+- If the task is incomplete, describe what remains in `status_report.txt`
+
+Once a phase is complete, move on to the next numbered file. Do not skip or merge prompts unless instructed.
+
+If this session ends, resume from the last recorded `progress_log.txt` file.
+
+You may begin now by reading and executing `01_project_scope_and_structure.txt`.

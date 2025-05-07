@@ -1,0 +1,19 @@
+Now build the memory engine.
+
+Requirements:
+- Log all conversations in a structured format (timestamp, speaker, text)
+- Store a transcript log in plain text (JSON or Markdown)
+- Create a long-term memory module that:
+  - Embeds summaries of conversations
+  - Stores them in a vector DB (ChromaDB or FAISS)
+  - Allows `retrieve_relevant_memories(query: str) -> List[str]` for use in prompts
+- Allow daily snapshots and archiving of logs
+
+Modules to implement:
+- `memory/transcript_logger.py`
+- `memory/vector_memory.py`
+- `memory/summary_embedder.py`
+
+Memory will be injected into the LLM prompts during response generation.
+
+Future extensibility: Add tagging, topic detection, or emotional tone tracking later.

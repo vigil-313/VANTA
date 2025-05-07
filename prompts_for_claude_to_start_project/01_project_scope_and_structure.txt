@@ -1,0 +1,26 @@
+You are tasked with building a real-time, voice-based (VANTA) AI VANTA that behaves like an ambient presence — similar in spirit to JARVIS from Iron Man — but scoped to what is realistic today. The goal is to create a persistent, conversational agent that:
+
+- Listens continuously (no wake word required)
+- Can respond verbally using voice output
+- Remembers and stores all conversations
+- Has long-term semantic memory (via vector store)
+- Can decide *when* to speak and when not to
+- Has an evolving personality and configurable traits
+- Can track personal goals, reflect on conversations, and offer advice
+- Will eventually integrate into a project workflow platform (MCP) but this is *out of scope for now*
+
+The stack will be Python-based and must prioritize modularity and future extensibility.
+
+**Core modules needed:**
+1. Real-time microphone listener and STT pipeline
+2. LLM-based reasoning engine (Claude API, or optionally GPT-4o)
+3. TTS output module for voice responses
+4. Memory engine (transcript log + semantic embedding)
+5. Personality system (daily mood, role emphasis, tone config)
+6. Scheduling module for regular events like check-ins
+
+The code must run on macOS and eventually be deployable to a Synology NAS.
+
+Please begin by outputting the full proposed **project directory structure**, with each file/module named and described. Then summarize how the components will communicate (e.g. which modules import which).
+
+Only output the structure and high-level plan in this prompt. Do not generate code yet.
