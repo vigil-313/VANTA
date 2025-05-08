@@ -13,7 +13,7 @@ from vanta.config.app_settings import load_config
 def setup_logging():
     """Configure logging for the application"""
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,  # Change to DEBUG level for more verbose logging
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(sys.stdout),

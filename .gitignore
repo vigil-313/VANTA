@@ -39,6 +39,16 @@ ENV/
 # Logs
 logs/
 *.log
+transcription_test.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+.~*
+~*
 
 # Data
 data/conversations/*
@@ -47,6 +57,14 @@ data/user_data/*
 !data/conversations/.gitkeep
 !data/vector_db/.gitkeep
 !data/user_data/.gitkeep
+
+# Audio files
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.opus
 
 # Environment variables
 .env

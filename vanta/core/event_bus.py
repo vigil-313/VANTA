@@ -140,8 +140,22 @@ class EventBus:
             event_type: Type of event to publish
             data: Data payload for the event
         """
+        # Handle calls from other threads by using call_soon_threadsafe
         if self._loop and self._loop.is_running():
-            asyncio.create_task(self._publish_async(event_type, data))
+            try:
+                # For callbacks from other threads, use call_soon_threadsafe
+                import threading
+                if threading.current_thread() is not threading.main_thread():
+                    self._loop.call_soon_threadsafe(
+                        lambda: asyncio.create_task(self._publish_async(event_type, data))
+                    )
+                    logger.debug(f"Published event {event_type.name} from background thread")
+                else:
+                    # Normal case for the main thread
+                    asyncio.create_task(self._publish_async(event_type, data))
+                    logger.debug(f"Published event {event_type.name}")
+            except Exception as e:
+                logger.error(f"Error publishing event {event_type.name}: {e}")
         else:
             logger.warning(f"Event loop not running, cannot publish {event_type.name}")
     

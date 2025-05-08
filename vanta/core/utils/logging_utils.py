@@ -55,7 +55,15 @@ def setup_logging(
         log_level = config.get("system", {}).get("log_level", log_level)
         log_file = config.get("system", {}).get("log_file", log_file)
     
-    # Create logger
+    # Create root logger and set level
+    root_logger = logging.getLogger()
+    root_logger.setLevel(getattr(logging, log_level.upper()))
+    
+    # Remove existing handlers from root logger
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+        
+    # Create logger for our module
     logger = logging.getLogger(module_name)
     logger.setLevel(getattr(logging, log_level.upper()))
     
@@ -69,7 +77,7 @@ def setup_logging(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     ))
-    logger.addHandler(console_handler)
+    root_logger.addHandler(console_handler)
     
     # Add file handler if log file specified
     if log_file:
@@ -88,7 +96,30 @@ def setup_logging(
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         ))
-        logger.addHandler(file_handler)
+        # Add to root logger to capture all logs
+        root_logger.addHandler(file_handler)
+    
+    # Set specific module log levels
+    
+    # Enable DEBUG for VAD's important logs but filter other noise
+    vad_logger = logging.getLogger("vanta.voice.listener.vad")
+    vad_logger.setLevel(logging.INFO)  # Only show INFO and above for VAD
+    
+    # For microphone, we don't need constant audio level logs
+    mic_logger = logging.getLogger("vanta.voice.listener.microphone")
+    mic_logger.setLevel(logging.INFO)  # Only show INFO and above for microphone
+    
+    # Make sure STT logs are visible (transcription results)
+    stt_logger = logging.getLogger("vanta.voice.listener.stt_service")
+    stt_logger.setLevel(logging.INFO)
+    
+    # Make transcript processing visible
+    transcript_logger = logging.getLogger("vanta.voice.listener.transcript_processor")
+    transcript_logger.setLevel(logging.INFO)
+    
+    # Filter event bus spam
+    event_bus_logger = logging.getLogger("vanta.core.event_bus")
+    event_bus_logger.setLevel(logging.INFO)  # Hide DEBUG level event publishing
     
     return logger
 

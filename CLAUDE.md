@@ -2,6 +2,37 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## IMPORTANT: Session Protocol
+
+At the start of EVERY new Claude Code session (#command SESSION_START), IMMEDIATELY perform these steps in order:
+
+1. Review PROGRESS_TRACKING.md to understand current project status
+2. Check status_report.txt from the previous session
+3. Identify which prompt file to work on next based on progress
+4. Update PROGRESS_TRACKING.md with a new session entry:
+   ```
+   ### Session X (YYYY-MM-DD HH:MM - In Progress)
+   - Session goals:
+     - [List primary objectives for this session]
+   ```
+
+For full protocol details, see SESSION_PROTOCOL.md which defines procedures for:
+- #command SESSION_START - Beginning a new session
+- #command PROGRESS_UPDATE - Making significant progress
+- #command NEW_MODULE - Creating new modules
+- #command SESSION_END - Concluding sessions
+
+## IMPORTANT: Logging Protocol
+
+For any script execution:
+1. ALWAYS create a shell script wrapper for each Python script that:
+   - Captures output with tee to both console and log file
+   - Puts logs in the logs/ directory
+   - Allows for tailing logs in a separate terminal
+2. Name these scripts with "_with_logs.sh" suffix
+3. Make these scripts executable with chmod +x
+4. Provide clear instructions for tailing logs in a separate terminal
+
 ## Project Overview
 
 VANTA (Voice-based Ambient Neural Thought Assistant) is a modular, voice-based, memory-augmented AI companion that:

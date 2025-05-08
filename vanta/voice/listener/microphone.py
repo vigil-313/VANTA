@@ -25,6 +25,10 @@ except ImportError:
 class MicrophoneListener:
     """
     Captures real-time audio from microphone and emits audio events
+    
+    This class handles capturing audio from the system microphone, calculating
+    audio levels, and publishing audio data to the event bus. It's calibrated
+    to work with low-level input typical of some microphones.
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -39,6 +43,12 @@ class MicrophoneListener:
         self.sample_rate = config.get("sample_rate", 16000)
         self.chunk_size = config.get("chunk_size", 1024)
         self.channels = config.get("channels", 1)
+        
+        # Track audio levels for diagnosis
+        self.min_level = 1.0
+        self.max_level = 0.0
+        self.level_sum = 0.0
+        self.level_count = 0
         
         self.running = False
         self.stream: Optional[Any] = None
@@ -82,6 +92,11 @@ class MicrophoneListener:
             
         if self.stream:
             await self._stop_stream()
+            
+        # Log audio level statistics
+        if self.level_count > 0:
+            avg_level = self.level_sum / self.level_count
+            logger.info(f"Audio level statistics - Min: {self.min_level:.6f}, Max: {self.max_level:.6f}, Avg: {avg_level:.6f}")
     
     @run_in_executor
     def _stop_stream(self):
@@ -107,13 +122,39 @@ class MicrophoneListener:
         # Get the audio data as a numpy array
         audio_data = indata.copy()
         
+        # Calculate RMS amplitude for more accurate level measurement
+        # First convert to float in range [-1.0, 1.0] if needed
+        if audio_data.dtype != np.float32:
+            audio_data_float = audio_data.astype(np.float32)
+            if audio_data.dtype == np.int16:
+                audio_data_float /= 32767.0  # Normalize int16
+            elif audio_data.dtype == np.int32:
+                audio_data_float /= 2147483647.0  # Normalize int32
+        else:
+            audio_data_float = audio_data
+            
+        # Calculate RMS amplitude
+        audio_level = np.sqrt(np.mean(np.square(audio_data_float)))
+        
+        # Update statistics
+        if audio_level > 0:  # Only consider non-zero levels
+            self.min_level = min(self.min_level, audio_level)
+            self.max_level = max(self.max_level, audio_level)
+            self.level_sum += audio_level
+            self.level_count += 1
+        
+        # Only log significant audio levels
+        if audio_level > 0.01:
+            logger.debug(f"Microphone captured audio with level: {audio_level:.6f}")
+        
         # Emit the audio data as an event
         timestamp = time.time()
         bus.publish(EventType.AUDIO_CAPTURED, {
             "audio_data": audio_data,
             "timestamp": timestamp,
             "sample_rate": self.sample_rate,
-            "channels": self.channels
+            "channels": self.channels,
+            "audio_level": float(audio_level)  # Add level for VAD processing
         })
     
     async def _process_audio(self):

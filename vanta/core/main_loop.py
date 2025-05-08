@@ -7,12 +7,25 @@ import asyncio
 import logging
 import signal
 import time
+import os
 from typing import Dict, Any
 
 from vanta.core.event_bus import bus, EventType
 from vanta.core.system_status import SystemStatus
+
+# Voice input components
 from vanta.voice.listener.microphone import MicrophoneListener
+from vanta.voice.listener.vad import VoiceActivityDetector
+from vanta.voice.listener.stt_service import STTService
+from vanta.voice.listener.transcript_processor import TranscriptProcessor
+
+# Voice output components
+from vanta.voice.speaker.tts_engine import TTSEngine
 from vanta.voice.speaker.speech_queue import SpeechQueue
+
+# Reasoning components
+from vanta.reasoning.decision.speak_decider import SpeakDecider
+from vanta.reasoning.decision.response_generator import ResponseGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +46,32 @@ class MainLoop:
         self.running = False
         self.system_status = SystemStatus()
         
+        # Create required directories
+        self._ensure_directories()
+        
         # Component references
+        # Voice input
         self.microphone = None
+        self.vad = None
+        self.stt_service = None
+        self.transcript_processor = None
+        
+        # Voice output
+        self.tts_engine = None
         self.speech_queue = None
+        
+        # Reasoning
+        self.speak_decider = None
+        self.response_generator = None
+    
+    def _ensure_directories(self):
+        """Ensure required directories exist"""
+        data_dir = self.config.get("system", {}).get("data_dir", "data")
+        log_dir = os.path.dirname(self.config.get("system", {}).get("log_file", "logs/vanta.log"))
+        
+        for directory in [data_dir, log_dir, f"{data_dir}/conversations", f"{data_dir}/vector_db"]:
+            os.makedirs(directory, exist_ok=True)
+            logger.debug(f"Ensured directory exists: {directory}")
     
     def _setup_signal_handlers(self):
         """Set up signal handlers for graceful shutdown"""
@@ -51,15 +87,35 @@ class MainLoop:
         """Initialize and connect all system components"""
         logger.info("Initializing system components")
         
-        # Initialize event bus
+        # Initialize event bus first
         await bus.start()
         
-        # Initialize voice components
-        self.microphone = MicrophoneListener(self.config.get("microphone", {}))
-        self.speech_queue = SpeechQueue(self.config.get("speaker", {}))
+        # Initialize voice input components
+        self.microphone = MicrophoneListener(self.config)
+        self.vad = VoiceActivityDetector(self.config)
+        self.stt_service = STTService(self.config)
+        self.transcript_processor = TranscriptProcessor(self.config)
         
-        # Initialize other components here as they're implemented
-        # ...
+        # Initialize reasoning components
+        self.speak_decider = SpeakDecider(self.config)
+        self.response_generator = ResponseGenerator(self.config)
+        
+        # Initialize voice output components
+        self.tts_engine = TTSEngine(self.config)
+        self.speech_queue = SpeechQueue(self.config)
+        
+        # Start components in correct order
+        # 1. Start event handlers first
+        await self.vad.start() if hasattr(self.vad, 'start') else None
+        await self.stt_service.start()
+        await self.transcript_processor.start()
+        await self.speak_decider.start()
+        await self.response_generator.start()
+        await self.tts_engine.start()
+        await self.speech_queue.start()
+        
+        # 2. Start data producers last (microphone should be last as it immediately starts producing data)
+        await self.microphone.start()
         
         # Publish system startup event
         await bus.publish_async(EventType.SYSTEM_STARTUP, {
@@ -78,17 +134,20 @@ class MainLoop:
             "timestamp": time.time()
         })
         
-        # Shutdown voice components
-        if self.microphone:
-            await self.microphone.stop()
+        # Shutdown in reverse order
+        # 1. Stop data producers first
+        await self.microphone.stop()
         
-        if self.speech_queue:
-            await self.speech_queue.stop()
-            
-        # Shutdown other components here as they're implemented
-        # ...
+        # 2. Stop other components
+        await self.speech_queue.stop()
+        await self.tts_engine.stop()
+        await self.response_generator.stop()
+        await self.speak_decider.stop()
+        await self.transcript_processor.stop()
+        await self.stt_service.stop()
+        await self.vad.stop() if hasattr(self.vad, 'stop') else None
         
-        # Stop event bus last
+        # 3. Stop event bus last
         await bus.stop()
         
         logger.info("All components shut down")

@@ -4,7 +4,7 @@
 system:
   name: "VANTA"
   version: "0.1.0"
-  log_level: "INFO"
+  log_level: "INFO"  # INFO level to reduce output noise
   log_file: "logs/vanta.log"
   data_dir: "data"
 
@@ -14,9 +14,13 @@ microphone:
   sample_rate: 16000
   chunk_size: 1024
   channels: 1
-  vad_sensitivity: 3  # 1-3, where 3 is most sensitive
-  silence_threshold: 400  # ms of silence to consider speech ended
-  max_phrase_duration: 30000  # max ms for a single phrase before forced processing
+  vad_sensitivity: 2  # 0-3, where 0 is least aggressive, 3 most aggressive (using 2 for better filtering)
+  silence_threshold: 500  # ms of silence to consider speech ended (better for natural pauses)
+  max_phrase_duration: 10000  # 10 seconds max before forced processing
+  max_speech_frames: 200  # ~6 seconds at 30ms frames before forced speech end
+  min_speech_frames: 5  # Require 5 frames (~150ms) to trigger speech
+  audio_threshold: 0.003  # Amplitude threshold calibrated to actual speech levels
+  long_speech_warning: 6000  # ms of continuous speech to show a warning log
 
 # Speech-to-Text settings
 stt:
